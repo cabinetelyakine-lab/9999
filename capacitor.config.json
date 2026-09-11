@@ -1,0 +1,10 @@
+{
+  "appId": "dz.elections.staffing",
+  "appName": "ElectionStaffing",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
+}

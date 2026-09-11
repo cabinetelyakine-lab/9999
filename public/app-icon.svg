@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Clip Path for Squircle / App Icon shape -->
+    <clipPath id="squircleClip">
+      <rect x="0" y="0" width="512" height="512" rx="115" ry="115" />
+    </clipPath>
+    
+    <!-- Linear Gradients -->
+    <linearGradient id="flagGreenGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#007A3D" />
+      <stop offset="100%" stopColor="#005A2B" />
+    </linearGradient>
+    
+    <linearGradient id="flagWhiteGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#FFFFFF" />
+      <stop offset="100%" stopColor="#F1F5F9" />
+    </linearGradient>
+
+    <linearGradient id="goldBorderGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#FDE047" />
+      <stop offset="50%" stopColor="#F59E0B" />
+      <stop offset="100%" stopColor="#D97706" />
+    </linearGradient>
+
+    <linearGradient id="boxGlassGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+      <stop offset="50%" stopColor="#F8FAFC" stopOpacity="0.85" />
+      <stop offset="100%" stopColor="#E2E8F0" stopOpacity="0.95" />
+    </linearGradient>
+
+    <filter id="iconShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Base Icon Background clipped to standard app icon rounded shape -->
+  <g clip-path="url(#squircleClip)">
+    <!-- Flag Background: Left Half White, Right Half Algerian Green -->
+    <!-- Note: LTR layout, Left: White, Right: Green -->
+    <rect x="0" y="0" width="256" height="512" fill="url(#flagWhiteGrad)" />
+    <rect x="256" y="0" width="256" height="512" fill="url(#flagGreenGrad)" />
+
+    <!-- Center Algerian Crescent (الهلال الأحمر) -->
+    <g filter="url(#iconShadow)">
+      <!-- Red Crescent: Arc center at 256, 256 -->
+      <path
+        d="M 170 190 A 130 130 0 1 1 170 322 A 108 108 0 1 0 170 190 Z"
+        fill="#D21034"
+      />
+    </g>
+
+    <!-- Center Ballot Box Artwork (صندوق الانتخاب النظيف والواضح) -->
+    <g transform="translate(0, 15)" filter="url(#iconShadow)">
+      <!-- Main Ballot Box Body -->
+      <path
+        d="M 180 205 L 332 205 L 316 325 L 196 325 Z"
+        fill="#FFFFFF"
+        stroke="#0F172A"
+        stroke-width="5"
+        stroke-linejoin="round"
+      />
+
+      <!-- Glass Front Face -->
+      <path
+        d="M 194 219 L 318 219 L 306 312 L 206 312 Z"
+        fill="url(#boxGlassGrad)"
+      />
+
+      <!-- Red Central Circle on the Box -->
+      <circle
+        cx="256"
+        cy="265"
+        r="28"
+        fill="#D21034"
+        stroke="#FBBF24"
+        stroke-width="3.5"
+      />
+
+      <!-- White Checkmark in Red Circle -->
+      <path
+        d="M 246 265 L 253 272 L 267 257"
+        stroke="#FFFFFF"
+        stroke-width="3.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <!-- Ballot Box Top Lid (Algerian Green Frame) -->
+      <polygon
+        points="168,190 344,190 332,208 180,208"
+        fill="#006633"
+        stroke="#0F172A"
+        stroke-width="4.5"
+      />
+
+      <!-- Golden Lock on Box Lid -->
+      <rect
+        x="246"
+        y="195"
+        width="20"
+        height="16"
+        rx="3"
+        fill="#FBBF24"
+        stroke="#B45309"
+        stroke-width="2"
+      />
+      <circle cx="256" cy="203" r="2.5" fill="#78350F" />
+
+      <!-- Ballot Slot -->
+      <rect
+        x="208"
+        y="193"
+        width="96"
+        height="6.5"
+        rx="3"
+        fill="#002914"
+      />
+
+      <!-- Official White Ballot Envelope entering the Slot -->
+      <g>
+        <!-- Envelope Body -->
+        <polygon
+          points="224,136 288,136 280,192 232,192"
+          fill="#FFFFFF"
+          stroke="#94A3B8"
+          stroke-width="3"
+        />
+        <!-- Envelope Triangular Flap -->
+        <polygon
+          points="224,136 256,164 288,136"
+          fill="#F8FAFC"
+          stroke="#CBD5E1"
+          stroke-width="2"
+        />
+        <!-- Red Stamp Seal on Envelope -->
+        <circle cx="256" cy="151" r="7" fill="#D21034" />
+        <path
+          d="M 252.5 151 L 255 153.5 L 260 148"
+          stroke="#FFFFFF"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+    </g>
+
+    <!-- Outer Golden Accent Border -->
+    <rect
+      x="4"
+      y="4"
+      width="504"
+      height="504"
+      rx="111"
+      ry="111"
+      fill="none"
+      stroke="url(#goldBorderGrad)"
+      stroke-width="8"
+      opacity="0.9"
+    />
+  </g>
+</svg>
