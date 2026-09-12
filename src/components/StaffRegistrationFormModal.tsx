@@ -63,7 +63,7 @@ export const StaffRegistrationFormModal: React.FC<StaffRegistrationFormModalProp
   const [fileNumber, setFileNumber] = useState<string>('');
   const [depositDate, setDepositDate] = useState<string>('');
   const [electoralCommune, setElectoralCommune] = useState<string>('عين الدفلى');
-  const [votingPlace, setVotingPlace] = useState<string>('');
+  const [votingPlace, setVotingPlace] = useState<string>('عين الدفلى');
   const [electoralCardNumber, setElectoralCardNumber] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
@@ -150,7 +150,7 @@ export const StaffRegistrationFormModal: React.FC<StaffRegistrationFormModalProp
       setFileNumber('');
       setDepositDate('');
       setElectoralCommune('عين الدفلى');
-      setVotingPlace('');
+      setVotingPlace('عين الدفلى');
       setElectoralCardNumber('');
       setLastName('');
       setFirstName('');
@@ -231,7 +231,7 @@ export const StaffRegistrationFormModal: React.FC<StaffRegistrationFormModalProp
       const loc = findMemberLocation(member.id);
       if (loc.center) foundCenterName = loc.center.name;
     }
-    setVotingPlace(member.votingPlace || foundCenterName || '');
+    setVotingPlace(member.votingPlace || 'عين الدفلى');
 
     // Past roles
     const pastCenter: { [k: string]: string } = {

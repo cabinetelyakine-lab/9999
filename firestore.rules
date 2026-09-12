@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidElectionAppData(data) {
+      return data.keys().hasAll(['centers', 'updatedAt']) &&
+             data.keys().size() <= 6 &&
+             data.centers is list &&
+             data.centers.size() <= 1000 &&
+             data.updatedAt is string &&
+             data.updatedAt.size() <= 50;
+    }
+
+    match /election_app/{docId} {
+      allow get: if isValidId(docId);
+      allow list: if false;
+      allow create, update: if isValidId(docId) && isValidElectionAppData(request.resource.data);
+      allow delete: if false;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

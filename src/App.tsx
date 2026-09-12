@@ -245,8 +245,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#7fa534] text-slate-100 font-sans antialiased relative selection:bg-amber-400 selection:text-slate-950">
 
-      {/* ── Firebase Sync Indicator (floating top-left) ─────────────────── */}
-      <div className="fixed top-3 left-3 z-40">
+      {/* ── Firebase Sync Indicator (floating top-left - hidden in print) ─── */}
+      <div className="fixed top-3 left-3 z-40 print:hidden no-print">
         <FirebaseSyncIndicator
           syncState={syncState}
           onManualSync={() => manualSync(centers)}

@@ -1,0 +1,26 @@
+{
+  "entities": {
+    "ElectionAppData": {
+      "title": "ElectionAppData",
+      "description": "Stores electoral centers, offices, and staffing data synchronized across PC, mobile, and web",
+      "type": "object",
+      "properties": {
+        "centers": {
+          "type": "array",
+          "description": "List of voting centers with offices and staff members"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of the last synchronization"
+        }
+      },
+      "required": ["centers", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/election_app/{docId}": {
+      "schema": "ElectionAppData",
+      "description": "Synchronized election center and staff configuration document"
+    }
+  }
+}

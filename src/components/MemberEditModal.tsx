@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StaffMember } from '../types';
-import { X, Check, User, Phone, Calendar, FileText, Briefcase, Trash2, Eraser, PhoneCall, Printer, ArrowRight, MapPin, Globe, Lock, ShieldAlert } from 'lucide-react';
+import { X, Check, User, Phone, Calendar, FileText, Briefcase, Trash2, Eraser, PhoneCall, Printer, ArrowRight, MapPin, Globe, Lock, ShieldAlert, Vote } from 'lucide-react';
 import { arabicToLatin } from '../utils/transliteration';
 
 interface MemberEditModalProps {
@@ -32,7 +32,10 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
 
   useEffect(() => {
     if (member) {
-      setFormData({ ...member });
+      setFormData({
+        ...member,
+        votingPlace: member.votingPlace && member.votingPlace.trim() !== '' ? member.votingPlace : 'عين الدفلى',
+      });
       setIsConfirmingDeleteSlot(false);
     }
   }, [member]);
@@ -62,9 +65,13 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
       ...formData,
       firstName: '',
       lastName: '',
+      latinFirstName: '',
+      latinLastName: '',
       birthDate: '',
+      birthCommune: '',
       phone: '',
       notes: '',
+      votingPlace: 'عين الدفلى',
     };
     onSave(cleared);
     onClose();
@@ -86,9 +93,13 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
       ...formData,
       firstName: '',
       lastName: '',
+      latinFirstName: '',
+      latinLastName: '',
       birthDate: '',
+      birthCommune: '',
       phone: '',
       notes: '',
+      votingPlace: 'عين الدفلى',
     });
   };
 
@@ -315,36 +326,68 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
               />
             </div>
           </div>
-          {/* Phone Field */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-sm font-extrabold text-white flex items-center gap-2">
-                <Phone className="w-4 h-4 text-blue-400" />
-                <span>رقم الهاتف</span>
-              </label>
-              {formData.phone && (
-                <a
-                  href={`tel:${formData.phone.replace(/\s+/g, '')}`}
-                  className="text-xs font-black text-emerald-300 hover:text-white flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-700/80 px-2.5 py-1 rounded-lg transition-colors"
-                  title="اتصال مباشر بهذا الرقم"
-                >
-                  <PhoneCall className="w-3.5 h-3.5" />
-                  <span>اتصال فوري</span>
-                </a>
-              )}
+          {/* Phone & Voting Place Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-extrabold text-white flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-blue-400" />
+                  <span>رقم الهاتف</span>
+                </label>
+                {formData.phone && (
+                  <a
+                    href={`tel:${formData.phone.replace(/\s+/g, '')}`}
+                    className="text-xs font-black text-emerald-300 hover:text-white flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-700/80 px-2.5 py-1 rounded-lg transition-colors"
+                    title="اتصال مباشر بهذا الرقم"
+                  >
+                    <PhoneCall className="w-3.5 h-3.5" />
+                    <span>اتصال فوري</span>
+                  </a>
+                )}
+              </div>
+              <input
+                id="member-phone-input"
+                type="tel"
+                dir="ltr"
+                placeholder="06XXXXXXXX"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                style={{ color: '#FFFFFF' }}
+                className="w-full px-4 py-3 bg-[#102a5c] border border-slate-600 rounded-xl text-xl sm:text-2xl font-black text-right text-white !text-white placeholder:text-blue-300/60 focus:bg-[#163674] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-300 transition-all font-mono shadow-inner"
+              />
             </div>
-            <input
-              id="member-phone-input"
-              type="tel"
-              dir="ltr"
-              placeholder="06XXXXXXXX"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              style={{ color: '#FFFFFF' }}
-              className="w-full px-4 py-3 bg-[#102a5c] border border-slate-600 rounded-xl text-xl sm:text-2xl font-black text-right text-white !text-white placeholder:text-blue-300/60 focus:bg-[#163674] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-300 transition-all font-mono shadow-inner"
-            />
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-extrabold text-white flex items-center gap-2">
+                  <Vote className="w-4 h-4 text-emerald-400" />
+                  <span>مكان الانتخاب</span>
+                </label>
+                {formData.votingPlace && formData.votingPlace !== 'عين الدفلى' && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, votingPlace: 'عين الدفلى' })}
+                    className="text-2xs font-bold text-emerald-300 hover:text-emerald-200 transition-colors flex items-center gap-1 bg-emerald-950/60 hover:bg-emerald-900/60 px-2 py-0.5 rounded-md border border-emerald-700/60"
+                    title="إعادة التعيين إلى عين الدفلى"
+                  >
+                    <span>عين الدفلى</span>
+                  </button>
+                )}
+              </div>
+              <input
+                id="member-voting-place-input"
+                type="text"
+                placeholder="مكان الانتخاب (مثال: عين الدفلى)"
+                value={formData.votingPlace !== undefined ? formData.votingPlace : 'عين الدفلى'}
+                onChange={(e) =>
+                  setFormData({ ...formData, votingPlace: e.target.value })
+                }
+                style={{ color: '#FFFFFF' }}
+                className="w-full px-4 py-3 bg-[#102a5c] border border-slate-600 rounded-xl text-lg sm:text-xl font-black text-white !text-white placeholder:text-blue-300/60 focus:bg-[#163674] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-300 transition-all shadow-inner"
+              />
+            </div>
           </div>
 
           {/* Notes & Status Circles */}

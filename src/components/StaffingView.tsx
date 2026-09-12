@@ -2320,12 +2320,22 @@ const StaffRoleCard: React.FC<StaffRoleCardProps> = ({ staff, onEdit, onClear, o
         )}
       </div>
 
-      {/* Additional details - BirthDate, Phone, & Notes */}
-      {hasData && (staff.phone || staff.birthDate || staff.notes || staff.notesStatus) && (
+      {/* Additional details - BirthDate, Phone, VotingPlace, & Notes */}
+      {hasData && (staff.phone || staff.birthDate || staff.votingPlace || staff.notes || staff.notesStatus) && (
         <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100">
           {staff.birthDate && (
             <span className="text-xs sm:text-sm font-mono font-bold text-black">
               {staff.birthDate}
+            </span>
+          )}
+
+          {staff.votingPlace && (
+            <span
+              className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded flex items-center gap-1"
+              title="مكان الانتخاب"
+            >
+              <Vote className="w-3 h-3 text-emerald-700 shrink-0" />
+              <span>{staff.votingPlace}</span>
             </span>
           )}
 

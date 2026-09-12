@@ -31,6 +31,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   LogOut,
+  Vote,
 } from 'lucide-react';
 import { MemberEditModal } from './MemberEditModal';
 import { StaffRegistrationFormModal } from './StaffRegistrationFormModal';
@@ -783,6 +784,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                 <th className="p-2 border border-slate-300">المركز</th>
                 <th className="p-2 border border-slate-300">المكتب</th>
                 <th className="p-2 border border-slate-300">تاريخ الميلاد</th>
+                <th className="p-2 border border-slate-300">مكان الانتخاب</th>
                 <th className="p-2 border border-slate-300">رقم الهاتف</th>
                 <th className="p-2 border border-slate-300">الحالة</th>
               </tr>
@@ -796,6 +798,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                   <td className="p-2 border border-slate-300">{item.centerName}</td>
                   <td className="p-2 border border-slate-300">{item.officeName || 'طاقم المركز'}</td>
                   <td className="p-2 border border-slate-300">{item.member.birthDate || '—'}</td>
+                  <td className="p-2 border border-slate-300">{item.member.votingPlace || 'عين الدفلى'}</td>
                   <td className="p-2 border border-slate-300">{item.member.phone || '—'}</td>
                   <td className="p-2 border border-slate-300 font-bold">
                     {item.member.notesStatus === 'rejected' ? 'مرفوض' : item.member.notesStatus === 'accepted' ? 'مقبول' : '—'}
@@ -934,11 +937,21 @@ export const SearchView: React.FC<SearchViewProps> = ({
                       )}
                     </div>
 
-                    {/* Additional details - BirthDate, Phone, & Notes */}
+                    {/* Additional details - BirthDate, Phone, VotingPlace, & Notes */}
                     <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
                       {member.birthDate && (
                         <span className="text-xs sm:text-sm font-mono font-bold text-black">
                           {member.birthDate}
+                        </span>
+                      )}
+
+                      {member.votingPlace && (
+                        <span
+                          className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded flex items-center gap-1"
+                          title="مكان الانتخاب"
+                        >
+                          <Vote className="w-3 h-3 text-emerald-700 shrink-0" />
+                          <span>{member.votingPlace}</span>
                         </span>
                       )}
 

@@ -21,6 +21,8 @@ import {
   Unlock,
   SlidersHorizontal,
   LogOut,
+  FileText,
+  X,
 } from 'lucide-react';
 import { AnieLogo } from './AnieLogo';
 import { getMemberLatinFirstName, getMemberLatinLastName, arabicToLatin } from '../utils/transliteration';
@@ -125,6 +127,11 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
   // Local state for custom banner titles (directly above the table)
   const [customBannerTitles, setCustomBannerTitles] = useState<{ [tableId: string]: string }>({});
 
+  // Local state for custom general table title (shown above all tables instead of default generated title)
+  const [generalTableTitle, setGeneralTableTitle] = useState<string>(() => {
+    return localStorage.getItem('staff_table_general_title') || '';
+  });
+
   // Local state for custom section titles (office header row inside table)
   const [customSectionTitles, setCustomSectionTitles] = useState<{ [sectionId: string]: string }>({});
 
@@ -186,7 +193,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
             latinLastName: getMemberLatinLastName(m.lastName, m.latinLastName),
             birthDate: m.birthDate || '',
             birthCommune: m.birthCommune || '',
-            votingPlace: m.votingPlace || center.name || '',
+            votingPlace: m.votingPlace || 'عين الدفلى',
             phone: m.phone || '',
             originalMember: m,
           };
@@ -262,7 +269,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
             latinLastName: getMemberLatinLastName(m.lastName, m.latinLastName),
             birthDate: m.birthDate || '',
             birthCommune: m.birthCommune || '',
-            votingPlace: m.votingPlace || center.name || '',
+            votingPlace: m.votingPlace || 'عين الدفلى',
             phone: m.phone || '',
             originalMember: m,
           };
@@ -317,7 +324,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
               latinLastName: getMemberLatinLastName(m.lastName, m.latinLastName),
               birthDate: m.birthDate || '',
               birthCommune: m.birthCommune || '',
-              votingPlace: m.votingPlace || center.name || '',
+              votingPlace: m.votingPlace || 'عين الدفلى',
               phone: m.phone || '',
               originalMember: m,
             };
@@ -410,9 +417,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
         table: t,
         uniqueKey: t.id,
         renderSections: t.sections,
-        printBannerTitle:
-          customBannerTitles[t.id] ??
-          `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${t.centerName}${t.centerCode ? ` (رمز: ${t.centerCode})` : ''} — ${t.title}`,
+        printBannerTitle: customBannerTitles[t.id] ?? generalTableTitle,
         printTotalRows: t.allRows.length,
       }));
     }
@@ -423,9 +428,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
         table: t,
         uniqueKey: `print-all-${t.id}`,
         renderSections: t.sections,
-        printBannerTitle:
-          customBannerTitles[t.id] ??
-          `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${t.centerName}${t.centerCode ? ` (رمز: ${t.centerCode})` : ''} — ${t.title}`,
+        printBannerTitle: customBannerTitles[t.id] ?? generalTableTitle,
         printTotalRows: t.allRows.length,
       }));
     }
@@ -438,9 +441,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
           table: t,
           uniqueKey: `print-center-${t.id}`,
           renderSections: t.sections,
-          printBannerTitle:
-            customBannerTitles[t.id] ??
-            `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${t.centerName}${t.centerCode ? ` (رمز: ${t.centerCode})` : ''} — ${t.title}`,
+          printBannerTitle: customBannerTitles[t.id] ?? generalTableTitle,
           printTotalRows: t.allRows.length,
         }));
     }
@@ -453,9 +454,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
           table: t,
           uniqueKey: `print-table-${t.id}`,
           renderSections: t.sections,
-          printBannerTitle:
-            customBannerTitles[t.id] ??
-            `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${t.centerName}${t.centerCode ? ` (رمز: ${t.centerCode})` : ''} — ${t.title}`,
+          printBannerTitle: customBannerTitles[t.id] ?? generalTableTitle,
           printTotalRows: t.allRows.length,
         }));
     }
@@ -477,7 +476,8 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
           table: parentTable,
           uniqueKey: `print-office-${targetSection.sectionId}`,
           renderSections: [targetSection],
-          printBannerTitle: `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${parentTable.centerName}${parentTable.centerCode ? ` (رمز: ${parentTable.centerCode})` : ''} — ${targetSection.sectionTitle}`,
+          printBannerTitle:
+            customBannerTitles[targetSection.sectionId] ?? generalTableTitle,
           printTotalRows: targetSection.rows.length,
         },
       ];
@@ -491,9 +491,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
           table: t,
           uniqueKey: `print-custom-${t.id}`,
           renderSections: t.sections,
-          printBannerTitle:
-            customBannerTitles[t.id] ??
-            `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${t.centerName}${t.centerCode ? ` (رمز: ${t.centerCode})` : ''} — ${t.title}`,
+          printBannerTitle: customBannerTitles[t.id] ?? generalTableTitle,
           printTotalRows: t.allRows.length,
         }));
     }
@@ -541,8 +539,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
           uniqueKey: `print-custom-single-${sec.sectionId}-${idx}`,
           renderSections: [sec],
           printBannerTitle:
-            customBannerTitles[sec.sectionId] ??
-            `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${centerName}${centerCode ? ` (رمز: ${centerCode})` : ''} — ${sec.sectionTitle}`,
+            customBannerTitles[sec.sectionId] ?? generalTableTitle,
           printTotalRows: sec.rows.length,
         }));
       }
@@ -576,8 +573,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
           uniqueKey: `print-custom-pair-${pairId}`,
           renderSections: pair,
           printBannerTitle:
-            customBannerTitles[pairId] ??
-            `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${centerName}${centerCode ? ` (رمز: ${centerCode})` : ''} — ${pairTitle}`,
+            customBannerTitles[pairId] ?? generalTableTitle,
           printTotalRows: totalRows,
         });
       }
@@ -586,7 +582,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
     }
 
     return [];
-  }, [activePrintTarget, displayedTables, allPairTables, customBannerTitles]);
+  }, [activePrintTarget, displayedTables, allPairTables, customBannerTitles, generalTableTitle]);
 
   // Unique roles for filter dropdown
   const availableRoles = useMemo(() => {
@@ -652,8 +648,32 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
     });
   };
 
+  // Save general table title
+  const handleSaveGeneralTitle = () => {
+    localStorage.setItem('staff_table_general_title', generalTableTitle);
+    setCustomBannerTitles({});
+    setSaveSuccessMsg(
+      generalTableTitle.trim()
+        ? `تم حفظ وتطبيق عنوان الجداول: "${generalTableTitle}" بنجاح.`
+        : 'تم حفظ عنوان الجداول.'
+    );
+    setTimeout(() => setSaveSuccessMsg(null), 3000);
+  };
+
+  // Clear general table title
+  const handleClearGeneralTitle = () => {
+    setGeneralTableTitle('');
+    localStorage.removeItem('staff_table_general_title');
+    setCustomBannerTitles({});
+    setSaveSuccessMsg('تم تفريغ وحذف عنوان الجداول بنجاح.');
+    setTimeout(() => setSaveSuccessMsg(null), 3000);
+  };
+
   // Save all inline edits and custom order numbers back to Centers
   const handleSaveAll = () => {
+    // Also save the general table title to localStorage
+    localStorage.setItem('staff_table_general_title', generalTableTitle);
+
     if (!isSupervisor) {
       alert('حفظ وتعديل بيانات المؤطرين محصور بالمشرف فقط.\nلتفعيل وضع المشرف وصلاحيات التعديل، انتقل إلى خانة البحث واكتب mohamed 44000');
       return;
@@ -810,6 +830,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
       'Nom',
       'تاريخ الميلاد',
       'مكان الميلاد',
+      'مكان الانتخاب',
       'المهمة',
       'المركز',
       'المكتب',
@@ -828,6 +849,7 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
           `"${(editedCells[r.memberId]?.latinLastName ?? r.latinLastName).replace(/"/g, '""')}"`,
           `"${editedCells[r.memberId]?.birthDate ?? r.birthDate}"`,
           `"${(editedCells[r.memberId]?.birthCommune ?? r.birthCommune).replace(/"/g, '""')}"`,
+          `"${(editedCells[r.memberId]?.votingPlace ?? r.votingPlace).replace(/"/g, '""')}"`,
           `"${editedCells[r.memberId]?.role ?? r.role}"`,
           `"${r.centerName.replace(/"/g, '""')}"`,
           `"${r.isCenterStaff ? 'طاقم المركز' : r.officeName || `مكتب ${r.officeNumber}`}"`,
@@ -1171,6 +1193,49 @@ export const StaffTableView: React.FC<StaffTableViewProps> = ({
                 />
                 <span className="text-slate-200 font-semibold">المؤطرين المسجلين فقط</span>
               </label>
+
+              {/* Custom General Table Title Input (خانة عنوان الجداول) */}
+              <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-xl border-2 border-amber-400/80 shadow-md">
+                <FileText className="w-4 h-4 text-amber-400 shrink-0" />
+                <label
+                  htmlFor="general-table-title-input"
+                  className="text-amber-300 font-black shrink-0 text-xs cursor-pointer"
+                >
+                  عنوان الجداول:
+                </label>
+                <input
+                  id="general-table-title-input"
+                  type="text"
+                  value={generalTableTitle}
+                  onChange={(e) => setGeneralTableTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSaveGeneralTitle();
+                  }}
+                  placeholder="اكتب العنوان الظاهر فوق الجداول..."
+                  className="bg-slate-950 text-white font-bold px-3 py-1 rounded-lg border border-slate-700 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none w-52 sm:w-64 md:w-80 text-xs placeholder:text-slate-500"
+                  title="اكتب هنا العنوان الذي سيظهر أعلى الجداول ثم اضغط حفظ"
+                />
+                <button
+                  type="button"
+                  id="save-general-title-btn"
+                  onClick={handleSaveGeneralTitle}
+                  className="flex items-center gap-1 px-2.5 py-1 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black rounded-lg text-xs transition-all cursor-pointer shadow-xs shrink-0"
+                  title="حفظ هذا العنوان وتطبيقه على كافة الجداول"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>حفظ</span>
+                </button>
+                {generalTableTitle && (
+                  <button
+                    type="button"
+                    onClick={handleClearGeneralTitle}
+                    className="p-1 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-lg transition-colors cursor-pointer shrink-0"
+                    title="تفريغ ومسح عنوان الجداول"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Numbering Tools section */}
@@ -1846,15 +1911,16 @@ const OfficialDocumentHeader: React.FC<OfficialDocumentHeaderProps> = ({
       </div>
 
       {/* Document Subject Banner (الخانة الطويلة فوق الجدول مباشرة - قابلة للتعديل) */}
-      <div className="mt-2 py-1 px-3 bg-slate-100 rounded-lg border border-slate-400 max-w-4xl mx-auto shadow-xs print:bg-transparent print:border-black print:shadow-none w-full">
+      <div
+        className={`mt-2 py-1 px-3 bg-slate-100 rounded-lg border border-slate-400 max-w-4xl mx-auto shadow-xs print:bg-transparent print:border-black print:shadow-none w-full ${
+          !bannerText || !bannerText.trim() ? 'print:hidden' : ''
+        }`}
+      >
         <input
           type="text"
-          value={
-            bannerText ??
-            `جدول حصر وتوزيع المؤطرين — مركز التصويت: ${centerName} ${centerCode ? `(رمز: ${centerCode})` : ''} — ${tableTitle}`
-          }
+          value={bannerText || ''}
           onChange={(e) => onBannerTextChange?.(e.target.value)}
-          placeholder={`جدول حصر وتوزيع المؤطرين — مركز التصويت: ${centerName} ${centerCode ? `(رمز: ${centerCode})` : ''} — ${tableTitle}`}
+          placeholder="عنوان الجدول (اكتب هنا أو حدده من خانة 'عنوان الجداول' بالأعلى)..."
           className="w-full text-center text-xs sm:text-sm font-black text-slate-900 bg-transparent border-b border-dashed border-slate-400/50 hover:border-slate-600 focus:border-blue-600 focus:bg-white focus:outline-none px-2 py-0.5 rounded transition-all print:border-none print:p-0 print:text-black print:font-black"
           title="انقر لتعديل نص هذه الخانة العلوية للجدول مباشرة"
         />

@@ -91,7 +91,7 @@ VITE_FIREBASE_APP_ID=xxx`}
   const cfg = config[status];
 
   return (
-    <div className="relative">
+    <div className="relative print:hidden no-print">
       <button
         onClick={() => setShowDetails((v) => !v)}
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all hover:opacity-80 ${cfg.classes}`}

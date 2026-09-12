@@ -12,6 +12,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   syncToFirebase,
   loadFromFirebase,
+  subscribeToFirebase,
   markPendingSync,
   clearPendingSync,
   hasPendingSync,
@@ -21,7 +22,8 @@ import {
 } from './firebase';
 import type { Center } from '../types';
 
-const DEBOUNCE_MS = 2500; // Wait 2.5s after last change before syncing
+const DEBOUNCE_MS = 2000; // Wait 2s after last local change before uploading
+const STORAGE_KEY = 'electoral_staffing_data_v7_empty_staff';
 
 export function useFirebaseSync(
   centers: Center[],
@@ -36,6 +38,11 @@ export function useFirebaseSync(
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstLoad = useRef(true);
   const lastSyncedData = useRef<string>('');
+  const centersRef = useRef<Center[]>(centers);
+
+  useEffect(() => {
+    centersRef.current = centers;
+  }, [centers]);
 
   const updateStatus = useCallback((status: SyncStatus, error?: string) => {
     setSyncState((prev) => ({
@@ -46,24 +53,63 @@ export function useFirebaseSync(
     }));
   }, []);
 
-  // On first mount: try to load data from Firebase
+  // Real-time synchronization & Initial data load
   useEffect(() => {
     if (!isFirebaseConfigured()) {
-      updateStatus('error', 'Firebase غير مُهيأ — أضف إعدادات .env');
+      updateStatus('error', 'Firebase غير مهيأ');
       return;
     }
 
     if (!navigator.onLine) {
       updateStatus('offline');
-      return;
+    } else {
+      updateStatus('syncing');
     }
 
-    loadFromFirebase(updateStatus).then((firebaseData) => {
-      if (firebaseData && firebaseData.length > 0) {
-        onCentersLoaded(firebaseData);
-        lastSyncedData.current = JSON.stringify(firebaseData);
+    // Subscribe to real-time changes across all devices (PC exe, Mobile App, Web)
+    const unsubscribe = subscribeToFirebase(
+      (remoteCenters) => {
+        if (remoteCenters && Array.isArray(remoteCenters) && remoteCenters.length > 0) {
+          const remoteSerialized = JSON.stringify(remoteCenters);
+          // Only apply if different from our last synced snapshot
+          if (remoteSerialized !== lastSyncedData.current) {
+            lastSyncedData.current = remoteSerialized;
+            onCentersLoaded(remoteCenters);
+            try {
+              localStorage.setItem(STORAGE_KEY, remoteSerialized);
+            } catch {
+              // ignore storage errors
+            }
+          }
+          updateStatus('synced');
+          clearPendingSync();
+        } else {
+          // If remote document is empty, push local data to populate Firebase
+          const currentLocal = centersRef.current;
+          if (currentLocal && currentLocal.length > 0) {
+            syncToFirebase(currentLocal, updateStatus).then((ok) => {
+              if (ok) {
+                lastSyncedData.current = JSON.stringify(currentLocal);
+                clearPendingSync();
+              }
+            });
+          } else {
+            updateStatus('synced');
+          }
+        }
+      },
+      (errorMsg) => {
+        if (!navigator.onLine) {
+          updateStatus('offline');
+        } else {
+          updateStatus('error', errorMsg);
+        }
       }
-    });
+    );
+
+    return () => {
+      unsubscribe();
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Debounced sync whenever centers change

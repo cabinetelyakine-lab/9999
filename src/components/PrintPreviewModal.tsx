@@ -47,8 +47,8 @@ export const PrintPreviewModal: React.FC<PrintPreviewModalProps> = ({
     // نسخ المحتوى وحذف كل عناصر print:hidden (أزرار الطباعة السريعة وغيرها)
     const clone = contentRef.current.cloneNode(true) as HTMLElement;
 
-    // حذف كل عنصر عنده class يحتوي print:hidden أو no-print
-    clone.querySelectorAll('[class*="print:hidden"], .no-print').forEach((el) => el.remove());
+    // حذف كل عنصر عنده class يحتوي print:hidden أو no-print أو أزرار وحالات المزامنة
+    clone.querySelectorAll('[class*="print:hidden"], [class*="no-print"], .no-print, .print\\:hidden').forEach((el) => el.remove());
 
     const content = clone.innerHTML;
 
@@ -93,9 +93,13 @@ export const PrintPreviewModal: React.FC<PrintPreviewModalProps> = ({
       overflow: hidden;
     }
 
-    /* إخفاء أزرار الطباعة السريعة داخل المعاينة */
-    .print\\:hidden { display: none !important; }
-    .no-print { display: none !important; }
+    /* إخفاء أزرار الطباعة السريعة وشارات المزامنة داخل المعاينة والطباعة */
+    .print\\:hidden,
+    .no-print,
+    [class*="print:hidden"],
+    [class*="no-print"] {
+      display: none !important;
+    }
 
     /* ── فرض اتجاه/مقاس الورقة المختار من المستخدم (يطغى على أي @page سابق) ── */
     @page {
